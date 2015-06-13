@@ -1,0 +1,58 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{calendario-romano}[2015/05/10 v1.0]
+\RequirePackage{xspace}
+\RequirePackage[latin]{babel}
+\RequirePackage{etoolbox}
+\RequirePackage{baseromano}
+
+
+\newbool{compatta}
+\setbool{compatta}{false}
+\DeclareOption{compatta}{\setbool{compatta}{true}}
+\ProcessOptions\relax
+
+
+\renewcommand\datelatin{\def\today{\number\day%da togliere solo per test
+		\space\testbisestile{\number\year}
+		\ifnum\number\day=1\latinoKalendis{\number\month}\fi%kalenda
+		\ifnum\number\day=\latinoPridieNonae{\number\month}\latinoMensisPridie\latinoPridieNonaeNome{\number\month}\fi%
+		\ifnum\number\day=\latinoNonae{\number\month}\latinoNonaeNome{\number\month}\fi%
+		\ifnum\number\day=\latinoIdus{\number\month}\latinoIdusNome{\number\month}\fi%
+\ifboolexpr{
+	test {\ifnumcomp{\number\month}{=}{2}}
+	and test {\iftoggle{bisestile}}}
+{\ifnum\number\day=29\ifbool{compatta}{Pr. Kal. Marti}{Pridie Kalendas Martias} \fi}%
+{\ifnum\number\day=\latinoMensisDurata{\number\month}\latinoMensisPridie\latinoPridieKalendasNome{\number\month}\fi}%
+\ifnum\number\day=\latinoPridieIdus{\number\month}\latinoMensisPridie\latinoPridieIdusNome{\number\month}\fi%
+\ifboolexpr{%
+	test {\ifnumless{\number\day}{\latinoPridieNonae{\number\month}}}%
+	and
+	test{\ifnumgreater{\number\day}{1}}}%
+{\latinoAnteDiemuno{\number\month}{\number\day}}{}%
+\ifboolexpr{%
+	test {\ifnumless{\number\day}{\latinoPridieIdus{\number\month}}}%
+	and
+	test{\ifnumgreater{\number\day}{\latinoNonae{\number\month}}}}%
+{\latinoAnteDiemdue{\number\month}{\number\day}}{}%%
+\ifboolexpr{%
+	test {\ifnumcomp{\number\month}{=}{2}}
+	and test {\iftoggle{bisestile}}}
+{\ifboolexpr{%
+		test {\ifnumless{\number\day}{29}}%
+		and
+		test{\ifnumgreater{\number\day}{\latinoIdus{\number\month}}}}%
+	{\latinoAnteDiemquattro{\number\day}}{}}%
+{\ifboolexpr{%
+		test {\ifnumless{\number\day}{\latinoMensisDurata{\number\month}}}%
+		and
+		test{\ifnumgreater{\number\day}{\latinoIdus{\number\month}}}}%
+{\latinoAnteDiemtre{\number\month}{\number\day}}{}}%
+\stampaanno{\number\year}}}
+
+
+	
+\def\data#1/#2/#3 {% Lo spazio prima della graffa è significativo
+	\day=#3\relax
+	\month=#2\relax
+	\year=#1\relax
+	\today\xspace}
