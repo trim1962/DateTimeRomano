@@ -1,0 +1,304 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{romano-latino}[2015/05/10 v1.0]
+\RequirePackage{xspace}
+\RequirePackage[latin]{babel}
+\RequirePackage{etoolbox}
+
+
+\newbool{compatta}
+\setbool{compatta}{false}
+\DeclareOption{compatta}{\setbool{compatta}{true}}
+\ProcessOptions\relax
+
+\input{tempbabel}
+
+
+
+\newcounter{countA}
+\newtoggle{bisestile}
+\togglefalse{bisestile}
+
+
+\newcommand{\testbisestile}[1]{
+	\setcounter{countA}{#1}
+	\ifnumcomp{#1}{>}{1582}{
+		\ifboolexpr{
+			(test{ \ifnumcomp{(\value{countA}/4)*4-\value{countA}}{=}{0}}
+			and not test  {\ifnumcomp{(\value{countA}/100)*100-\value{countA}}{=}{0}})
+			or test {\ifnumcomp{(\value{countA}/400)*400-\value{countA}}{=}{0}}
+		}{\toggletrue{bisestile}}{\togglefalse{bisestile}}%gregoriano
+	}
+	{\ifnumcomp{(\value{countA}/4)*4-\value{countA}}{=}{0}
+	{\toggletrue{bisestile}}{\togglefalse{bisestile}}%giuliano
+	}
+}
+
+\newcounter{countS}
+\newcounter{countT}
+\newcounter{countM}
+\newcommand{\stamparoman}[1]{\space{\uppercase\expandafter{\romannumeral#1}}}
+\newcommand{\stampaanno}[1]{%
+	\setcounter{countS}{#1}
+	\setcounter{countM}{-1}
+	\ifnumcomp{#1}{>}{0}{%
+		\addtocounter{countS}{753}ANNO--\stamparoman{#1}--PCN--VEL--\stamparoman{\thecountS}--AUC}{\setcounter{countS}{\numexpr\thecountM*\thecountS}
+		\setcounter{countT}{\thecountS}%
+		\setcounter{countS}{\numexpr 754-\thecountS} ANNO--\stamparoman{\thecountT}--ACN--VEL--\stamparoman{\thecountS}--AUC
+		}
+		}
+
+\newcommand*{\latinoMensisDurata}[1]{%
+	\ifcase#1
+	\or
+	31%
+	\or
+	28%
+	\or
+	31%
+	\or
+	30%
+	\or
+	31%
+	\or
+	30%
+	\or
+	31%
+	\or
+	31%
+	\or
+	30%
+	\or
+	31%
+	\or
+	30%
+	\or
+	31%
+	\fi
+}
+\newcommand*{\latinoNonae}[1]{%
+	\ifcase#1
+	\or
+	5%
+	\or
+	5%
+	\or
+	7%
+	\or
+	5%
+	\or
+	7%
+	\or
+	5%
+	\or
+	7%
+	\or
+	5%
+	\or
+	5%
+	\or
+	7%
+	\or
+	5%
+	\or
+	5%
+	\fi
+}
+
+\newcommand*{\latinoPridieNonae}[1]{%
+	\ifcase#1
+	\or
+	4%
+	\or
+	4%
+	\or
+	6%
+	\or
+	4%
+	\or
+	6%
+	\or
+	4%
+	\or
+	6%
+	\or
+	4%
+	\or
+	4%
+	\or
+	6%
+	\or
+	4%
+	\or
+	4%
+	\fi
+}
+
+\newcommand*{\latinoIdus}[1]{%
+	\ifcase#1
+	\or
+	13%Ianuarius%
+	\or
+	13%Februarius%
+	\or
+	15%Martius%
+	\or
+	13%Aprilis%
+	\or
+	15%Maius%
+	\or
+	13%Iunius%
+	\or
+	15%Iulius%
+	\or
+	13%Augustus%
+	\or
+	13%Septemper%
+	\or
+	15%October%
+	\or
+	13%November%
+	\or
+	13%December%
+	\fi
+}
+
+
+\newcommand*{\latinoPridieIdus}[1]{%
+	\ifcase#1
+	\or
+	12%Ianuarius%
+	\or
+	12%Februarius%
+	\or
+	14%Martius%
+	\or
+	12%Aprilis%
+	\or
+	14%Maius%
+	\or
+	12%Iunius%
+	\or
+	14%Iulius%
+	\or
+	12%Augustus%
+	\or
+	12%Septemper%
+	\or
+	14%October%
+	\or
+	12%November%
+	\or
+	12%December%
+	\fi
+}
+
+
+
+
+\newcommand*{\latinoHora}[1]{%
+	\ifcase#1
+	tertia vigilia%
+	\or
+	tertia vigilia%
+	\or
+	tertia vigilia%
+	\or
+	tertia vigilia%
+	\or
+	quarta vigilia%
+	\or
+	quarta vigilia%
+	\or
+	quarta vigilia%
+	\or
+	hora prima%
+	\or
+	hora secunda%
+	\or
+	hora tertia%
+	\or
+	hora quarta%
+	\or
+	hora quinta%
+	\or
+	hora sexta%
+	\or
+	hora septima%
+	\or
+	hora octava%
+	\or
+	hora nona%
+	\or
+	hora decima%
+	\or
+	hora undecima%
+	\or
+	hora duodecima%
+	\or
+	prima vigilia%
+	\or
+	prima vigilia%
+	\or
+	secunda vigilia%
+	\or
+	secunda vigilia%
+	\or
+	secunda vigilia%
+	\or
+	secunda vigilia% 
+	\fi
+}
+
+\newcommand{\latinoAnteDiemuno}[2]{%
+\latinoAnteDiem{\number\numexpr(\number\latinoNonae{#1}-\number#2+1)\relax}\space\latinoPridieNonaeNome{#1}}%
+\newcommand{\latinoAnteDiemdue}[2]{%
+\latinoAnteDiem{\number\numexpr(\number\latinoIdus{#1}-\number#2+1)\relax}\space\latinoPridieIdusNome{#1}}%
+\newcommand{\latinoAnteDiemtre}[2]{%
+\latinoAnteDiem{\number\numexpr(\number\latinoMensisDurata{#1}-\number#2+2)\relax}\space\latinoPridieKalendasNome{#1}}%
+\newcommand{\latinoAnteDiemquattro}[1]{%
+\latinoAnteDiemBis{\number\numexpr(29-\number#1+2)\relax}}%
+
+\renewcommand\datelatin{\def\today{\number\day%da togliere solo per test
+		\space\testbisestile{\number\year}
+		\ifnum\number\day=1\latinoKalendis{\number\month}\fi%kalenda
+		\ifnum\number\day=\latinoPridieNonae{\number\month}\latinoMensisPridie\latinoPridieNonaeNome{\number\month}\fi%
+		\ifnum\number\day=\latinoNonae{\number\month}\latinoNonaeNome{\number\month}\fi%
+		\ifnum\number\day=\latinoIdus{\number\month}\latinoIdusNome{\number\month}\fi%
+\ifboolexpr{
+	test {\ifnumcomp{\number\month}{=}{2}}
+	and test {\iftoggle{bisestile}}}
+{\ifnum\number\day=29\ifbool{compatta}{Pr. Kal. Marti}{Pridie Kalendas Martias} \fi}%
+{\ifnum\number\day=\latinoMensisDurata{\number\month}\latinoMensisPridie\latinoPridieKalendasNome{\number\month}\fi}%
+\ifnum\number\day=\latinoPridieIdus{\number\month}\latinoMensisPridie\latinoPridieIdusNome{\number\month}\fi%
+\ifboolexpr{%
+	test {\ifnumless{\number\day}{\latinoPridieNonae{\number\month}}}%
+	and
+	test{\ifnumgreater{\number\day}{1}}}%
+{\latinoAnteDiemuno{\number\month}{\number\day}}{}%
+\ifboolexpr{%
+	test {\ifnumless{\number\day}{\latinoPridieIdus{\number\month}}}%
+	and
+	test{\ifnumgreater{\number\day}{\latinoNonae{\number\month}}}}%
+{\latinoAnteDiemdue{\number\month}{\number\day}}{}%%
+\ifboolexpr{%
+	test {\ifnumcomp{\number\month}{=}{2}}
+	and test {\iftoggle{bisestile}}}
+{\ifboolexpr{%
+		test {\ifnumless{\number\day}{29}}%
+		and
+		test{\ifnumgreater{\number\day}{\latinoIdus{\number\month}}}}%
+	{\latinoAnteDiemquattro{\number\day}}{}}%
+{\ifboolexpr{%
+		test {\ifnumless{\number\day}{\latinoMensisDurata{\number\month}}}%
+		and
+		test{\ifnumgreater{\number\day}{\latinoIdus{\number\month}}}}%
+{\latinoAnteDiemtre{\number\month}{\number\day}}{}}%
+\stampaanno{\number\year}}}
+
+
+	
+\def\data#1/#2/#3 {% Lo spazio prima della graffa è significativo
+	\day=#3\relax
+	\month=#2\relax
+	\year=#1\relax
+	\today\xspace}
