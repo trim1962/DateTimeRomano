@@ -12,26 +12,37 @@
 \newcounter{countS}
 \newcounter{countT}
 \newcounter{countM}
-\newcommand{\stamparoman}[1]{\space{\uppercase\expandafter{\romannumeral#1}}}
-\newcommand{\stampadate}[1]{%
+\newbool{annodomini}
+\setbool{annodomini}{false}
+%\DeclareOption{annodomini}{\setbool{annodomini}{true}}
+\newbool{adurbe}
+\setbool{adurbe}{false}
+%\DeclareOption{adurbe}{\setbool{adurbe}{true}}
+
+\newcommand{\stamparoman}[1]{\uppercase\expandafter{\romannumeral#1}}
+\newcommand{\stampaanno}[1]{%
 	\setcounter{countS}{#1}
  \setcounter{countM}{-1}
-	\ifnumcomp{#1}{>}{0}{%
-		\addtocounter{countS}{753}ANNO--\stamparoman{#1}--PCN--VEL--\stamparoman{\thecountS}--AUC}{\setcounter{countS}{\numexpr\thecountM*\thecountS}
-		 	\setcounter{countT}{\thecountS}%
- 	\setcounter{countS}{\numexpr 754-\thecountS}%
- ANNO--\stamparoman{\thecountT}--ACN--VEL--\stamparoman{\thecountS}--AUC}}
+	\ifnumcomp{#1}{>}{0}{
+		\addtocounter{countS}{753}
+Anno--\ifbool{annodomini}{\stamparoman{#1}--PCN}{}
+\ifbool{adurbe}{--\stamparoman{\thecountS}--AUC}{}}
+{\setcounter{countS}{\numexpr\thecountM*\thecountS}\setcounter{countT}{\thecountS}
+\setcounter{countS}{\numexpr 754-\thecountS}%
+Anno--\ifbool{annodomini}{\stamparoman{\thecountT}--ACN}{}
+\ifbool{adurbe}{--\stamparoman{\thecountS}--AUC}{}}}
 
 \listfiles
 \begin{document}
+\setbool{adurbe}{true}
+\setbool{annodomini}{true}
+\stampaanno{2015}	
 	
-\stampadate{2015}	
-	
-\stampadate{-20}
+\stampaanno{-20}
 
-\stampadate{20}
+\stampaanno{20}
 
-\stampadate{-100}
+\stampaanno{-100}
 
-\stampadate{100}
+\stampaanno{100}
 \end{document}
